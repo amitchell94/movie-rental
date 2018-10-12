@@ -18,9 +18,9 @@ public class Application {
         MoviesService moviesService = new MoviesService(dbMovieRepository);
         CustomersService customersService = new CustomersService(dbCustomerRepository);
 
-        Menu menu = new Menu();
+        Menu menu = new Menu(moviesService, rentalsService, customersService);
 
-        menu.startMenu(moviesService, rentalsService, customersService);
+        menu.startMenu();
 
 
         List<Rental> rentalList = rentalsService.getAllRentals();

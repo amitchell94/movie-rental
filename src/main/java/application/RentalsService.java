@@ -3,7 +3,6 @@ package application;
 import data.RentalRepository;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RentalsService {
@@ -31,7 +30,15 @@ public class RentalsService {
         return rental;
     }
 
-    public List<Movie> getRentedMovieIDs(String customerName) {
+    public Rental returnRental(int customerID, int movieID, LocalDate returnDate, Double cost) {
+        return rentalRepository.returnRental(customerID,movieID,returnDate,cost);
+    }
 
+    public List<Integer> getRentedMovieIDs(int customerID) {
+        return rentalRepository.getRentedMovieIDs(customerID);
+    }
+
+    public boolean movieIsRented (int customerId, int movieId) {
+        return rentalRepository.movieIsRented(customerId,movieId);
     }
 }

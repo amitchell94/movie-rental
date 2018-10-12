@@ -3,6 +3,8 @@ package presentation;
 import application.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -38,6 +40,9 @@ public class Menu {
                     break;
                 case 1:
                     rentMovie();
+                    break;
+                case 2:
+                    returnMovie();
                     break;
                 case 3:
                     finish = true;
@@ -113,12 +118,11 @@ public class Menu {
             Customer customer = customersService.getCustomerFromName(customerName);
 
             if (customer.getName() != null) {
-                Movie movie = selectMovieToRent();
+                Movie movie = selectMovieToReturn(customer.getId());
                 if (movie != null) {
-                    Rental rental = rentalsService.createRental(customer.getId(), movie.getId(), LocalDate.now(), null, null);
-                    rentalsService.save(rental);
-                    System.out.println("Okay " + customer.getName() + ", you have rented "
-                            + movie.getTitle() + ". Thanks for your custom!");
+                    Rental rental = rentalsService.returnRental(customer.getId(), movie.getId(), LocalDate.now(), movie.getPrice());
+                    System.out.println("Okay " + customer.getName() + ", you have returned "
+                            + movie.getTitle() + ". The total cost will be £" + rental.getCost() +". Thanks for your custom!");
                     System.out.println();
                     return;
                 }
@@ -128,9 +132,19 @@ public class Menu {
         }
     }
 
-    private Movie selectMovieToReturn() {
+    private Movie selectMovieToReturn(int customerID) {
         Movie movie = null;
-        printMovieList();
+        List<Integer> movieIdList = rentalsService.getRentedMovieIDs(customerID);
+        List<Movie> rentedMovies = new ArrayList<>();
+        for (Integer movieId : movieIdList) {
+            rentedMovies.add(moviesService.getMovieFromID(movieId));
+        }
+
+        System.out.println("You have rented the following movies:");
+        for (Movie rentedMovie : rentedMovies) {
+            System.out.println(rentedMovie.getTitle());
+        }
+
         boolean finished = false;
         while (!finished) {
             System.out.println("Please type in the movie title you wish to return, type 0 to go back");
@@ -141,7 +155,7 @@ public class Menu {
             } else {
                 return null;
             }
-            if (movie.getTitle() != null) {
+            if (movie.getTitle() != null && rentalsService.movieIsRented(customerID,movie.getId())) {
                 return movie;
             } else {
                 System.out.println("Invalid movie title");

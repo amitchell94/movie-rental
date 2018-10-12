@@ -121,4 +121,42 @@ public class DbMovieRepository implements MovieRepository {
         }
         return movie;
     }
+
+    @Override
+    public Movie getMovieFromId(int movieId) {
+        Movie movie = new Movie();
+        Connection connection = null;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+            preparedStatement = connection.prepareStatement("SELECT * from blockbuster.movies where m_id = ?");
+            preparedStatement.setInt(1,movieId);
+            resultSet =preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                movie.setId(resultSet.getInt("m_id"));
+                movie.setTitle(resultSet.getString("m_title"));
+                movie.setActor(resultSet.getString("m_actor"));
+                movie.setYear(resultSet.getInt("m_year"));
+                movie.setPrice(resultSet.getDouble("m_price"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return movie;
+    }
 }

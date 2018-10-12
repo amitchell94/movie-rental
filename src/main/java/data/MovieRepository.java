@@ -11,4 +11,5 @@ public interface MovieRepository {
     List<Movie> getAllMovies();
 
     Movie getMovieFromTitle(String title);
+    Movie getMovieFromId(int movieId);
 }

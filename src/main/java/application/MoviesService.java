@@ -22,4 +22,8 @@ public class MoviesService {
     public Movie getMovieFromTitle (String title) {
         return movieRepository.getMovieFromTitle(title);
     }
+
+    public Movie getMovieFromID (int movieId) {
+        return movieRepository.getMovieFromId(movieId);
+    }
 }
