@@ -1,7 +1,5 @@
 package application;
 
-import data.MovieRepository;
-
 import java.util.List;
 
 public class MoviesService {
@@ -15,15 +13,18 @@ public class MoviesService {
         movieRepository.save(movie);
     }
 
-    public List<Movie> getAllMovies () {
+    public List<Movie> getAllMovies() {
         return movieRepository.getAllMovies();
     }
 
-    public Movie getMovieFromTitle (String title) {
+    public Movie getMovieFromTitle(String title) {
+        if (title.equals("")) {
+            return null;
+        }
         return movieRepository.getMovieFromTitle(title);
     }
 
-    public Movie getMovieFromID (int movieId) {
+    public Movie getMovieFromId(int movieId) {
         return movieRepository.getMovieFromId(movieId);
     }
 }

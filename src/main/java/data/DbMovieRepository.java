@@ -1,8 +1,7 @@
 package data;
 
-import application.Customer;
 import application.Movie;
-import application.Rental;
+import application.MovieRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

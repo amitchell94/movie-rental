@@ -1,4 +1,4 @@
-package data;
+package application;
 
 import application.Movie;
 import application.Rental;
@@ -14,5 +14,9 @@ public interface RentalRepository {
 
     boolean movieIsRented (int customerId, int movieId);
 
-    Rental returnRental(int customerID, int movieID, LocalDate returnDate, Double price);
+    void returnRental(LocalDate returnDate, Double totalCost, int rentalID);
+
+    Rental getRentalFromCustAndMovIDs (int customerID, int movieID);
+
+    Rental getRentalFromRentalID (int rentalID);
 }

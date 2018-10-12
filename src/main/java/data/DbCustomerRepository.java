@@ -1,6 +1,7 @@
 package data;
 
 import application.Customer;
+import application.CustomerRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

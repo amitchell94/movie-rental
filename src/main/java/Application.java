@@ -1,11 +1,6 @@
-import application.CustomersService;
-import application.MoviesService;
-import application.Rental;
-import application.RentalsService;
+import application.*;
 import data.*;
 import presentation.Menu;
-
-import java.util.List;
 
 public class Application {
 
@@ -22,12 +17,5 @@ public class Application {
 
         menu.startMenu();
 
-
-        List<Rental> rentalList = rentalsService.getAllRentals();
-        System.out.println(rentalList.toString());
-
-        //Rental rental1 = createRental(1,5,"1994-08-09","1994-06-06",6.99);
-
-        //rentalsService.save(rental1);
     }
 }

@@ -1,8 +1,7 @@
 package application;
 
-import data.RentalRepository;
-
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class RentalsService {
@@ -30,8 +29,21 @@ public class RentalsService {
         return rental;
     }
 
-    public Rental returnRental(int customerID, int movieID, LocalDate returnDate, Double cost) {
-        return rentalRepository.returnRental(customerID,movieID,returnDate,cost);
+    public Rental returnRental(int customerID, int movieID, LocalDate returnDate, Double price) {
+
+        Rental rental;
+
+        rental = rentalRepository.getRentalFromCustAndMovIDs(customerID,movieID);
+
+        long daysRented =  ChronoUnit.DAYS.between(rental.getRentalDate(),returnDate);
+        if (daysRented == 0) daysRented = 1;
+        double totalCost = daysRented * price;
+
+        rentalRepository.returnRental(returnDate,totalCost,rental.getId());
+
+        rental = rentalRepository.getRentalFromRentalID(rental.getId());
+
+        return rental;
     }
 
     public List<Integer> getRentedMovieIDs(int customerID) {

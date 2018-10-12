@@ -1,7 +1,5 @@
 package application;
 
-import data.CustomerRepository;
-
 import java.util.List;
 
 public class CustomersService {

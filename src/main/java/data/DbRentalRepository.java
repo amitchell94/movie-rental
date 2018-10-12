@@ -1,7 +1,7 @@
 package data;
 
-import application.Movie;
 import application.Rental;
+import application.RentalRepository;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -50,7 +50,37 @@ public class DbRentalRepository implements RentalRepository {
     }
 
     @Override
-    public Rental returnRental(int customerID, int movieID, LocalDate returnDate, Double price) {
+    public void returnRental(LocalDate returnDate, Double totalCost, int rentalID) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+
+            preparedStatement = connection.prepareStatement("update blockbuster.rentals set r_return_date = ?, r_cost = ?"
+                    + " where r_id = ?");
+            preparedStatement.setDate(1, Date.valueOf(returnDate));
+            preparedStatement.setDouble(2, totalCost);
+            preparedStatement.setInt(3, rentalID);
+            preparedStatement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public Rental getRentalFromCustAndMovIDs (int customerID, int movieID) {
         Rental rental = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -64,22 +94,38 @@ public class DbRentalRepository implements RentalRepository {
             resultSet = preparedStatement.executeQuery();
 
             rental = new Rental();
-
             rental = transformToRental(resultSet);
 
-            long daysRented =  ChronoUnit.DAYS.between(rental.getRentalDate(),returnDate);
-            if (daysRented == 0) daysRented = 1;
-            double totalCost = daysRented * price;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return rental;
+    }
 
-            preparedStatement = connection.prepareStatement("update blockbuster.rentals set r_return_date = ?, r_cost = ?"
-                    + " where r_id = ?");
-            preparedStatement.setDate(1, Date.valueOf(returnDate));
-            preparedStatement.setDouble(2, totalCost);
-            preparedStatement.setInt(3, rental.getId());
-            preparedStatement.executeUpdate();
+    public Rental getRentalFromRentalID (int rentalID) {
+        Rental rental = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
 
             preparedStatement = connection.prepareStatement("select * from blockbuster.rentals where r_id = ?");
-            preparedStatement.setInt(1, rental.getId());
+            preparedStatement.setInt(1, rentalID);
             resultSet = preparedStatement.executeQuery();
 
             rental = transformToRental(resultSet);
@@ -114,7 +160,7 @@ public class DbRentalRepository implements RentalRepository {
             connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
 
             preparedStatement = connection.prepareStatement("select * from blockbuster.rentals");
-
+            resultSet = preparedStatement.executeQuery();
             rentalList = transformToRentalList(resultSet);
         } catch (Exception e) {
             e.printStackTrace();

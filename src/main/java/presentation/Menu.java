@@ -68,7 +68,7 @@ public class Menu {
             Customer customer = customersService.getCustomerFromName(customerName);
 
             if (customer.getName() != null) {
-                Movie movie = selectMovieToRent();
+                Movie movie = selectMovieToRent(customer.getId());
                 if (movie != null) {
                     Rental rental = rentalsService.createRental(customer.getId(), movie.getId(), LocalDate.now(), null, null);
                     rentalsService.save(rental);
@@ -83,8 +83,11 @@ public class Menu {
         }
     }
 
-    private Movie selectMovieToRent() {
+    private Movie selectMovieToRent(int customerID) {
         Movie movie = null;
+
+
+        //TODO need to make it so the user can only rent movies they haven't rented before.
         printMovieList();
         boolean finished = false;
         while (!finished) {
@@ -97,7 +100,11 @@ public class Menu {
                 return null;
             }
             if (movie.getTitle() != null) {
-                return movie;
+                if (!rentalsService.movieIsRented(customerID,movie.getId())) {
+                    return movie;
+                } else {
+                    System.out.println("You have already rented this movie!");
+                }
             } else {
                 System.out.println("Invalid movie title");
             }
@@ -137,7 +144,7 @@ public class Menu {
         List<Integer> movieIdList = rentalsService.getRentedMovieIDs(customerID);
         List<Movie> rentedMovies = new ArrayList<>();
         for (Integer movieId : movieIdList) {
-            rentedMovies.add(moviesService.getMovieFromID(movieId));
+            rentedMovies.add(moviesService.getMovieFromId(movieId));
         }
 
         if (rentedMovies.size() > 0) {
@@ -149,12 +156,11 @@ public class Menu {
             System.out.println("You haven't rented any movies.");
             return null;
         }
-
+        scanner.nextLine();
         boolean finished = false;
         while (!finished) {
             System.out.println("Please type in the movie title you wish to return, type 0 to go back");
             String movieTitle = scanner.nextLine();
-            movieTitle = scanner.nextLine();
             if (!"0".equals(movieTitle)) {
                 movie = moviesService.getMovieFromTitle(movieTitle);
             } else {
