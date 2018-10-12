@@ -67,13 +67,14 @@ public class DbRentalRepository implements RentalRepository {
 
             rental = transformToRental(resultSet);
 
-            long dayRented =  ChronoUnit.DAYS.between(rental.getRentalDate(),returnDate);
-            double totalCost = dayRented * price;
+            long daysRented =  ChronoUnit.DAYS.between(rental.getRentalDate(),returnDate);
+            if (daysRented == 0) daysRented = 1;
+            double totalCost = daysRented * price;
 
             preparedStatement = connection.prepareStatement("update blockbuster.rentals set r_return_date = ?, r_cost = ?"
                     + " where r_id = ?");
             preparedStatement.setDate(1, Date.valueOf(returnDate));
-            preparedStatement.setDouble(2, price);
+            preparedStatement.setDouble(2, totalCost);
             preparedStatement.setInt(3, rental.getId());
             preparedStatement.executeUpdate();
 

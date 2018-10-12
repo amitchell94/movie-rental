@@ -140,9 +140,14 @@ public class Menu {
             rentedMovies.add(moviesService.getMovieFromID(movieId));
         }
 
-        System.out.println("You have rented the following movies:");
-        for (Movie rentedMovie : rentedMovies) {
-            System.out.println(rentedMovie.getTitle());
+        if (rentedMovies.size() > 0) {
+            System.out.println("You have rented the following movies:");
+            for (Movie rentedMovie : rentedMovies) {
+                System.out.println(rentedMovie.getTitle());
+            }
+        } else {
+            System.out.println("You haven't rented any movies.");
+            return null;
         }
 
         boolean finished = false;
