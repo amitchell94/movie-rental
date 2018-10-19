@@ -1,8 +1,8 @@
-package application;
+package logic;
 
-import application.Movie;
-import application.MovieRepository;
-import application.MoviesService;
+import logic.movie.Movie;
+import logic.movie.MovieRepository;
+import logic.movie.MoviesService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

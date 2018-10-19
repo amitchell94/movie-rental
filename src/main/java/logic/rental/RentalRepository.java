@@ -1,7 +1,4 @@
-package application;
-
-import application.Movie;
-import application.Rental;
+package logic.rental;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +13,7 @@ public interface RentalRepository {
 
     void returnRental(LocalDate returnDate, Double totalCost, int rentalID);
 
-    Rental getRentalFromCustAndMovIDs (int customerID, int movieID);
+    Rental getRentalFromCustomerAndMovieIDs(int customerID, int movieID);
 
     Rental getRentalFromRentalID (int rentalID);
 }

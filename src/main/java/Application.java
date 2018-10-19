@@ -1,4 +1,9 @@
-import application.*;
+import logic.customer.CustomerRepository;
+import logic.customer.CustomersService;
+import logic.movie.MovieRepository;
+import logic.movie.MoviesService;
+import logic.rental.RentalRepository;
+import logic.rental.RentalsService;
 import data.*;
 import presentation.Menu;
 

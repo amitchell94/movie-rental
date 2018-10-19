@@ -1,4 +1,4 @@
-package application;
+package logic.customer;
 
 import java.util.List;
 

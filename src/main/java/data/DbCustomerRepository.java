@@ -1,7 +1,7 @@
 package data;
 
-import application.Customer;
-import application.CustomerRepository;
+import logic.customer.Customer;
+import logic.customer.CustomerRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

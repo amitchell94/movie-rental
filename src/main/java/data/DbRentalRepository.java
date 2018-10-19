@@ -1,11 +1,10 @@
 package data;
 
-import application.Rental;
-import application.RentalRepository;
+import logic.rental.Rental;
+import logic.rental.RentalRepository;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class DbRentalRepository implements RentalRepository {
     }
 
     @Override
-    public Rental getRentalFromCustAndMovIDs (int customerID, int movieID) {
+    public Rental getRentalFromCustomerAndMovieIDs(int customerID, int movieID) {
         Rental rental = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;

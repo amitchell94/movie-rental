@@ -1,4 +1,4 @@
-package application;
+package logic.movie;
 
 import java.util.List;
 

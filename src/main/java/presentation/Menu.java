@@ -1,6 +1,11 @@
 package presentation;
 
-import application.*;
+import logic.customer.Customer;
+import logic.customer.CustomersService;
+import logic.movie.Movie;
+import logic.movie.MoviesService;
+import logic.rental.Rental;
+import logic.rental.RentalsService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,7 +35,8 @@ public class Menu {
             System.out.println("0 - View all available movies");
             System.out.println("1 - Rent a movie");
             System.out.println("2 - Return a movie");
-            System.out.println("3 - Exit");
+            System.out.println("3 - Create an account");
+            System.out.println("4 - Exit");
 
             int option = scanner.nextInt();
 
@@ -45,6 +51,9 @@ public class Menu {
                     returnMovie();
                     break;
                 case 3:
+                    createCustomer();
+                    break;
+                case 4:
                     finish = true;
                     break;
                 default:
@@ -53,6 +62,46 @@ public class Menu {
         }
 
         System.out.println("Thanks for visiting Blockbuster!");
+    }
+
+    private void createCustomer() {
+        while (true) {
+            System.out.println("To create an account, please enter your name " +
+                    "or type 0 to go back to the main menu");
+            String customerName = scanner.next();
+
+            if("0".equals(customerName)){
+                return;
+            }
+
+            Customer customercheck = customersService.getCustomerFromName(customerName);
+
+            if (customercheck.getName() == null) {
+
+                scanner.nextLine();
+                Customer customer = new Customer();
+
+                customer.setName(customerName);
+
+                System.out.println("Now please enter your address " +
+                        "or type 0 to go back to the main menu");
+
+                String customerAddress = scanner.nextLine();
+
+                if ("0".equals(customerAddress)) {
+                    return;
+                }
+
+                customer.setAddress(customerAddress);
+
+                customersService.save(customer);
+
+                System.out.println("Okay, your account has been created");
+                return;
+            }
+            System.out.println("There is already an account with that name!");
+
+        }
     }
 
     private void rentMovie() {
@@ -99,7 +148,7 @@ public class Menu {
             } else {
                 return null;
             }
-            if (movie.getTitle() != null) {
+            if (movie != null) {
                 if (!rentalsService.movieIsRented(customerID,movie.getId())) {
                     return movie;
                 } else {

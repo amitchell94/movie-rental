@@ -1,6 +1,4 @@
-package application;
-
-import application.Movie;
+package logic.movie;
 
 import java.util.List;
 

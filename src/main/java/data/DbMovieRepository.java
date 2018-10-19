@@ -1,7 +1,7 @@
 package data;
 
-import application.Movie;
-import application.MovieRepository;
+import logic.movie.Movie;
+import logic.movie.MovieRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
