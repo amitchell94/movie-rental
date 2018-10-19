@@ -1,4 +1,4 @@
-package application;
+package logic.customer;
 
 public class Customer {
     private int id;

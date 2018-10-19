@@ -1,11 +1,11 @@
-import application.CustomersService;
-import application.MoviesService;
-import application.Rental;
-import application.RentalsService;
+import logic.customer.CustomerRepository;
+import logic.customer.CustomersService;
+import logic.movie.MovieRepository;
+import logic.movie.MoviesService;
+import logic.rental.RentalRepository;
+import logic.rental.RentalsService;
 import data.*;
 import presentation.Menu;
-
-import java.util.List;
 
 public class Application {
 
@@ -18,16 +18,9 @@ public class Application {
         MoviesService moviesService = new MoviesService(dbMovieRepository);
         CustomersService customersService = new CustomersService(dbCustomerRepository);
 
-        Menu menu = new Menu();
+        Menu menu = new Menu(moviesService, rentalsService, customersService);
 
-        menu.startMenu(moviesService, rentalsService, customersService);
+        menu.startMenu();
 
-
-        List<Rental> rentalList = rentalsService.getAllRentals();
-        System.out.println(rentalList.toString());
-
-        //Rental rental1 = createRental(1,5,"1994-08-09","1994-06-06",6.99);
-
-        //rentalsService.save(rental1);
     }
 }

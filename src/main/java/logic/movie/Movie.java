@@ -1,4 +1,4 @@
-package application;
+package logic.movie;
 
 public class Movie {
     private int id;

@@ -1,7 +1,6 @@
-package application;
+package logic.rental;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Rental {
     private Integer id;

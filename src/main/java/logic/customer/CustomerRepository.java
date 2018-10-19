@@ -1,6 +1,4 @@
-package data;
-
-import application.Customer;
+package logic.customer;
 
 import java.util.List;
 

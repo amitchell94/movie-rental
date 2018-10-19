@@ -1,6 +1,4 @@
-package application;
-
-import data.MovieRepository;
+package logic.movie;
 
 import java.util.List;
 
@@ -15,11 +13,18 @@ public class MoviesService {
         movieRepository.save(movie);
     }
 
-    public List<Movie> getAllMovies () {
+    public List<Movie> getAllMovies() {
         return movieRepository.getAllMovies();
     }
 
-    public Movie getMovieFromTitle (String title) {
+    public Movie getMovieFromTitle(String title) {
+        if (title.equals("")) {
+            return null;
+        }
         return movieRepository.getMovieFromTitle(title);
+    }
+
+    public Movie getMovieFromId(int movieId) {
+        return movieRepository.getMovieFromId(movieId);
     }
 }

@@ -1,6 +1,4 @@
-package data;
-
-import application.Movie;
+package logic.movie;
 
 import java.util.List;
 
@@ -11,4 +9,5 @@ public interface MovieRepository {
     List<Movie> getAllMovies();
 
     Movie getMovieFromTitle(String title);
+    Movie getMovieFromId(int movieId);
 }

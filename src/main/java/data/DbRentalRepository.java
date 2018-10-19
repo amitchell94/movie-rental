@@ -1,9 +1,10 @@
 package data;
 
-import application.Movie;
-import application.Rental;
+import logic.rental.Rental;
+import logic.rental.RentalRepository;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,107 @@ public class DbRentalRepository implements RentalRepository {
     }
 
     @Override
+    public void returnRental(LocalDate returnDate, Double totalCost, int rentalID) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+
+            preparedStatement = connection.prepareStatement("update blockbuster.rentals set r_return_date = ?, r_cost = ?"
+                    + " where r_id = ?");
+            preparedStatement.setDate(1, Date.valueOf(returnDate));
+            preparedStatement.setDouble(2, totalCost);
+            preparedStatement.setInt(3, rentalID);
+            preparedStatement.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public Rental getRentalFromCustomerAndMovieIDs(int customerID, int movieID) {
+        Rental rental = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+
+            preparedStatement = connection.prepareStatement("select * from blockbuster.rentals where (r_c_id = ? and r_m_id = ? and r_return_date is null)");
+            preparedStatement.setInt(1, customerID);
+            preparedStatement.setInt(2, movieID);
+            resultSet = preparedStatement.executeQuery();
+
+            rental = new Rental();
+            rental = transformToRental(resultSet);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return rental;
+    }
+
+    public Rental getRentalFromRentalID (int rentalID) {
+        Rental rental = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+
+            preparedStatement = connection.prepareStatement("select * from blockbuster.rentals where r_id = ?");
+            preparedStatement.setInt(1, rentalID);
+            resultSet = preparedStatement.executeQuery();
+
+            rental = transformToRental(resultSet);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return rental;
+    }
+
+    @Override
     public List<Rental> getAllRentals() {
         List<Rental> rentalList = new ArrayList<>();
         Connection connection = null;
@@ -57,7 +159,7 @@ public class DbRentalRepository implements RentalRepository {
             connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
 
             preparedStatement = connection.prepareStatement("select * from blockbuster.rentals");
-
+            resultSet = preparedStatement.executeQuery();
             rentalList = transformToRentalList(resultSet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,8 +190,10 @@ public class DbRentalRepository implements RentalRepository {
         try {
             connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
 
-            resultSet = connection.createStatement().executeQuery("select r_m_id from blockbuster.rentals where r_c_id = ? and r_return_date is null");
+            preparedStatement = connection.prepareStatement("select r_m_id from blockbuster.rentals where r_c_id = ? and r_return_date is null");
             preparedStatement.setInt(1, customerID);
+
+            resultSet = preparedStatement.executeQuery();
             movieIdList = transformToMovieIdList(resultSet);
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,6 +215,42 @@ public class DbRentalRepository implements RentalRepository {
         return movieIdList;
     }
 
+    @Override
+    public boolean movieIsRented(int customerId, int movieId) {
+        boolean isRented = false;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DriverManager.getConnection(ConnectionCreator.createConnectionUrl());
+
+            preparedStatement = connection.prepareStatement("select * from blockbuster.rentals where r_c_id = ? and r_m_id = ? and r_return_date is null");
+            preparedStatement.setInt(1, customerId);
+            preparedStatement.setInt(2, movieId);
+
+            resultSet = preparedStatement.executeQuery();
+            isRented = resultSet.next();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return isRented;
+    }
+
     private List<Rental> transformToRentalList(ResultSet resultSet) throws SQLException {
         List<Rental> rentalList = new ArrayList<>();
         while (resultSet.next()) {
@@ -129,9 +269,26 @@ public class DbRentalRepository implements RentalRepository {
     private List<Integer> transformToMovieIdList(ResultSet resultSet) throws SQLException {
         List<Integer> movieIdList = new ArrayList<>();
         while (resultSet.next()) {
-            Integer movieID = resultSet.getInt("m_id");
+            Integer movieID = resultSet.getInt("r_m_id");
             movieIdList.add(movieID);
         }
         return movieIdList;
+    }
+
+    private Rental transformToRental(ResultSet resultSet) throws SQLException {
+        Rental rental = new Rental();
+        if (resultSet.next()) {
+            rental.setId(resultSet.getInt("r_id"));
+            rental.setCustomerID(resultSet.getInt("r_c_id"));
+            rental.setMovieID(resultSet.getInt("r_m_id"));
+            rental.setRentalDate(resultSet.getDate("r_rental_date").toLocalDate());
+            if (resultSet.getDate("r_return_date") != null) {
+                rental.setReturnDate(resultSet.getDate("r_return_date").toLocalDate());
+            } else {
+                rental.setReturnDate(null);
+            }
+            rental.setCost(resultSet.getDouble("r_cost"));
+        }
+        return rental;
     }
 }
