@@ -15,9 +15,19 @@ In order to execute this program you will need to install the following:
 * MySQL
 
 ### Installing
-
 To get the development environment up and running, you will first need to create the database.
 
+This can be achieved by either importing the database schema, or manually using the terminal.
+#### Setting up database by importing schema
+Download the schema [blockbuster.sql](blockbuster.sql)
+
+Import the schema into your MySQL server.
+
+#### Setting up database using terminal
+
+In your terminal login to your MySQL as a user with the appropriate permissions.
+
+Then enter the following command to create your database.
 ```
 CREATE DATABASE blockbuster;
 ```
@@ -72,8 +82,6 @@ CREATE TABLE `rentals` (
 
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
-
 ## Running the tests
 
 No automated test included in this issue.
@@ -105,6 +113,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* CodingNomads for teaching me Java!
