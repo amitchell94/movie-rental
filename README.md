@@ -16,18 +16,60 @@ In order to execute this program you will need to install the following:
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+To get the development environment up and running, you will first need to create the database.
 
 ```
-Give the example
+CREATE DATABASE blockbuster;
+```
+Then use this new database
+```
+USE blockbuster;
 ```
 
-And repeat
+You will need to create the following tables in this database:
+
+A customer table
 
 ```
-until finished
+CREATE TABLE `customers` (
+  `c_id` int(11) NOT NULL AUTO_INCREMENT,
+  `c_name` varchar(25) DEFAULT NULL,
+  `c_address` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`c_id`)
+);
+```
+
+A movies table
+
+```
+CREATE TABLE `movies` (
+  `m_id` int(10) NOT NULL AUTO_INCREMENT,
+  `m_title` varchar(15) DEFAULT NULL,
+  `m_actor` varchar(20) DEFAULT NULL,
+  `m_year` year(4) DEFAULT NULL,
+  `m_genre` varchar(15) DEFAULT NULL,
+  `m_price` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`m_id`)
+);
+
+```
+And a rentals table
+
+```
+CREATE TABLE `rentals` (
+  `r_id` int(11) NOT NULL AUTO_INCREMENT,
+  `r_c_id` int(11) DEFAULT NULL,
+  `r_m_id` int(11) DEFAULT NULL,
+  `r_rental_date` date DEFAULT NULL,
+  `r_return_date` date DEFAULT NULL,
+  `r_cost` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`r_id`),
+  KEY `fk_r_m_id` (`r_m_id`),
+  KEY `fk_r_c_id` (`r_c_id`),
+  CONSTRAINT `fk_r_c_id` FOREIGN KEY (`r_c_id`) REFERENCES `customers` (`c_id`),
+  CONSTRAINT `fk_r_m_id` FOREIGN KEY (`r_m_id`) REFERENCES `movies` (`m_id`)
+);
+
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
@@ -43,7 +85,7 @@ This project has yet to be deployed on a live system.
 
 ## Built With
 
-* [Maven](https://maven.apache.org/) - Dependency Management
+* [Gradle](https://gradle.com/) - Dependency Management
 
 ## Contributing
 
